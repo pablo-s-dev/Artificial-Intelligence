@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Romania Road Map Problem</title>
+    <link rel="stylesheet" href="style.css">
+
+    <py-config>
+
+        packages = ['heapdict']
+
+        [[fetch]]
+        files = ['__init__.py', 'data.py']
+        from = '.'
+        to_folder = '.'
+
+        [[fetch]]
+        files = ['search_algorithms.py']
+        from = '../'
+        to_folder = '.'
+
+    </py-config>
+
+    <script type="text/javascript" crossorigin="anonymous"
+        src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css" />
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js?heapdict"></script>
+
+    <script src="script.js" type="text/javascript" defer></script>
+    <script src="script.py" type="py" defer async></script>
+
+
+</head>
+
+<body>
+
+    <div id="content">
+        <h1>Romania Roadmap problem: Blind/informed search</h1>
+        <div id="results-bar" class="bar">
+            <h1>Results</h1>
+            <p id="frontier">Frontier:</p>
+            <p id="explored">Explored:</p>
+            <p id="path">Path:</p>
+            <p id="depth">Depth:</p>
+            <p id="cost">Cost:</p>
+            <p id="steps">Steps:</p>
+            <p id="state">State: </p>
+            <p id="action">Next action: </p>
+        </div>
+        <div id="config-bar" class="bar">
+
+            <div id="configs">
+                <label for="start_select">From:</label>
+                <select name="start" id="start_select">
+                    <option value="Arad">Arad</option>
+                    <option value="Bucharest">Bucharest</option>
+                    <option value="Craiova">Craiova</option>
+                    <option value="Drobeta">Drobeta</option>
+                    <option value="Eforie">Eforie</option>
+                    <option value="Fagaras">Fagaras</option>
+                    <option value="Giurgiu">Giurgiu</option>
+                    <option value="Hirsova">Hirsova</option>
+                    <option value="Iasi">Iasi</option>
+                    <option value="Lugoj">Lugoj</option>
+                    <option value="Mehadia">Mehadia</option>
+                    <option value="Neamt">Neamt</option>
+                    <option value="Oradea">Oradea</option>
+                    <option value="Pitesti">Pitesti</option>
+                    <option value="Rimnicu">Rimnicu</option>
+                    <option value="Sibiu">Sibiu</option>
+                    <option value="Timisoara">Timisoara</option>
+                    <option value="Urziceni">Urziceni</option>
+                    <option value="Vaslui">Vaslui</option>
+                    <option value="Zerind">Zerind</option>
+                </select>
+                <label for="target_select">Target City:</label>
+                <select name="target city" id="target_select">
+                    <option value="Arad">Arad</option>
+                    <option value="Bucharest">Bucharest</option>
+                    <option value="Craiova">Craiova</option>
+                    <option value="Drobeta">Drobeta</option>
+                    <option value="Eforie">Eforie</option>
+                    <option value="Fagaras">Fagaras</option>
+                    <option value="Giurgiu">Giurgiu</option>
+                    <option value="Hirsova">Hirsova</option>
+                    <option value="Iasi">Iasi</option>
+                    <option value="Lugoj">Lugoj</option>
+                    <option value="Mehadia">Mehadia</option>
+                    <option value="Neamt">Neamt</option>
+                    <option value="Oradea">Oradea</option>
+                    <option value="Pitesti">Pitesti</option>
+                    <option value="Rimnicu">Rimnicu</option>
+                    <option value="Sibiu">Sibiu</option>
+                    <option value="Timisoara">Timisoara</option>
+                    <option value="Urziceni">Urziceni</option>
+                    <option value="Vaslui">Vaslui</option>
+                    <option value="Zerind">Zerind</option>
+                </select>
+                <label for="algorithm_select">Algorithm:</label>
+                <select name="algorithm" id="algorithm_select">
+                    <option value="bfs">BFS</option>
+                    <option value="dfs">DFS</option>
+                    <option value="ucs">UCS</option>
+                    <option value="astar">A*</option>
+                </select>
+            </div>
+            <div>
+                <div>
+                    <label for="step_by_step_checkbox">Step by step</label>
+                    <input type="checkbox" name="step_by_step" id="step_by_step_checkbox">
+                </div>
+                <div id="control_div">
+                    <button id="reset_btn">Reset</button>
+                    <button id="find_path_btn">Find Path</button>
+                </div>
+            </div>
+        </div>
+        <div id="graph-wrapper">
+            <div id="mynetwork"></div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
