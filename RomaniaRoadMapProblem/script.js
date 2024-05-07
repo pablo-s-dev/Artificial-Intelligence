@@ -159,7 +159,7 @@ for (let city in romania_graph) {
         edges.push({ from: city, to: connectedCity, label: String(romania_graph[city][connectedCity]), });
     }
 }
-console.log(edges)
+
 // Create a network
 let container = document.getElementById('mynetwork');
 let data = {
@@ -249,7 +249,6 @@ async function compute_sol_handler(e) {
             })).toJs();
             break;
     }
-    console.log(result)
     const step_result = result.next()
     reset_graph()
     update_ui(step_result.value.toJs())

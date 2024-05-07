@@ -24,15 +24,8 @@ def uniform_cost_search(graph, start_key: str, target_key: str, step_by_step: bo
     frontier[start_key] = 0
 
     while frontier:
-        
-
-        
-        print(f"Frontier has {len(frontier)} nodes.")
 
         root_key, root_cost = frontier.popitem()
-
-        print(f"Frontier has {len(frontier)} nodes.")
-
 
         if root_key == target_key:
 
@@ -88,8 +81,6 @@ def uniform_cost_search(graph, start_key: str, target_key: str, step_by_step: bo
             path = []
 
             node_key = root_key
-
-            print(len(path) - 1)
 
             while node_key:
 

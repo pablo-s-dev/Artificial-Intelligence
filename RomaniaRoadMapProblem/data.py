@@ -21,29 +21,6 @@ romania_map_nodes = {
     'Zerind': (108, 531)
 }
 
-romania_location_map_full = {
-    'Arad' : {'pos': (21.31227,46.18656), 'connections': ['Sibiu','Timisoara','Zerind'] },
-    'Sibiu' : {'pos': (24.12558,45.79833), 'connections': ['Fagaras','Rimnicu Vilcea','Oradea'] },
-    'Zerind' : {'pos': (21.51742,46.62251), 'connections': ['Oradea'] },
-    'Timisoara' : {'pos': (21.20868,45.74887), 'connections': ['Lugoj'] },
-    'Oradea' : {'pos': (21.91894,47.04650), 'connections': [] },
-    'Fagaras' : {'pos': (24.97310,45.84164), 'connections': ['Bucharest'] },
-    'Lugoj' : {'pos': (21.90346,45.69099), 'connections': ['Mehadia'] },
-    'Rimnicu' : {'pos': (24.36932,45.09968), 'connections': ['Craiova','Pitesti'] },
-    'Mehadia' : {'pos': (22.36452,44.90411), 'connections': ['Dobreta'] },
-    'Drobeta' : {'pos': (22.65973,44.63692), 'connections': ['Craiova'] },
-    'Craiova' : {'pos': (23.79488,44.33018), 'connections': [] },
-    'Pitesti' : {'pos': (24.86918,44.85648), 'connections': ['Bucharest','Craiova'] },
-    'Bucharest' : {'pos': (26.10254,44.42677), 'connections': ['Giurgiu','Urziceni'] },
-    'Giurgiu' : {'pos': (25.96993,43.90371), 'connections': [] },
-    'Urziceni' : {'pos': (26.64112,44.71653), 'connections': ['Hirsova','Vaslui'] },
-    'Vaslui' : {'pos': (27.72765,46.64069), 'connections': ['Lasi'] },
-    'Iasi' : {'pos':(27.60144,47.15845), 'connections': ['Neamt'] },
-    'Neamt' : {'pos': (26.38188,46.97587), 'connections': [] },
-    'Hirsova' : {'pos': (27.94566,44.68935), 'connections': ['Eforie'] },
-    'Eforie' : {'pos': (28.65273,44.04911), 'connections': [] }
-}
-
 romania_graph = {
     'Arad': {
         'Zerind': 75, 
@@ -157,46 +134,3 @@ heuristic_values = {
     "Urziceni" : 80,
     "Vaslui" : 199
 }  
-
-"""
-import sympy as sp
-
-# Create symbols for each city's coordinates
-symbols = {city: (sp.symbols(f'{city}_x'), sp.symbols(f'{city}_y')) for city in romania_graph.keys()}
-
-
-# Create equations based on the distances
-equations = [
-    sp.Eq(symbols['Bucharest'][0], 0),
-    sp.Eq(symbols['Bucharest'][1], 0),
-    #sp.Eq(symbols['Mehadia'][1] - symbols['Bucharest'][1], 0),
-    
-]
-
-# Get the symbols for the cities
-arad_x, arad_y = symbols['Arad']
-zerind_x, zerind_y = symbols['Zerind']
-oradea_x, oradea_y = symbols['Oradea']
-
-# Add the constraints
-#equations.append(sp.Eq((zerind_y - arad_y) / (zerind_x - arad_x), (oradea_y - arad_y) / (oradea_x - arad_x)))
-
-
-for city, neighbors in romania_graph.items():
-
-    x1, y1 = symbols[city]
-    norm = heuristic_values[city]
-
-    equations.append(sp.Eq(x1**2 + y1**2, norm**2))
-
-    for neighbor, distance in neighbors.items():
-        x2, y2 = symbols[neighbor]
-
-        equations.append(sp.Eq((x1 - x2)**2 + (y1 - y2)**2, distance**2))
-
-print(*equations)
-# Solve the system of equations
-solution_set = sp.linsolve(equations, symbols)
-print(solution_set)
-
-"""
