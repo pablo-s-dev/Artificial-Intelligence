@@ -10,9 +10,26 @@ body {
 	height: 100%;
 }
 
+#title_wrapper {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	z-index: 1000;
+	padding-top: 30px;
+}
+
 h1 {
 	text-align: center;
 	color: rgb(41, 41, 41);
+	-webkit-backdrop-filter: blur(10px);
+	backdrop-filter: blur(10px);
+}
+
+py-config {
+	display: none;
 }
 
 #content {
@@ -67,8 +84,6 @@ h1 {
 }
 
 .bar {
-	-webkit-backdrop-filter: blur(10px);
-	backdrop-filter: blur(10px);
 	background-color: rgba(255, 255, 255, 0.037);
 	padding: 2px;
 }
@@ -80,6 +95,8 @@ h1 {
 
 .bar span {
 	font-weight: normal;
+	-webkit-backdrop-filter: blur(10px);
+	backdrop-filter: blur(10px);
 }
 
 @media (min-width: 400px) {
@@ -100,4 +117,51 @@ h1 {
 		max-height: 85vh;
 		overflow: auto;
 	}
+}
+
+@keyframes octocat-wave {
+	0%,
+	100% {
+		transform: rotate(0);
+	}
+	20%,
+	60% {
+		transform: rotate(-25deg);
+	}
+	40%,
+	80% {
+		transform: rotate(10deg);
+	}
+}
+#github-corner {
+	z-index: 1000;
+}
+
+#github-corner:hover .octo-arm {
+	animation: octocat-wave 560ms ease-in-out;
+}
+
+@media (max-width: 500px) {
+	#github-corner:hover .octo-arm {
+		animation: none;
+	}
+	#github-corner .octo-arm {
+		animation: octocat-wave 560ms ease-in-out;
+	}
+}
+
+#loading {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000000;
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	font-size: 2rem;
 }

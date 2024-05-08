@@ -13,9 +13,9 @@ const action_el = document.getElementById('action')
 const step_by_step_checkbox = document.getElementById('step_by_step_checkbox')
 const depth_el = document.getElementById('depth')
 const bars = document.querySelectorAll('.bar')
-graph_wrapper = document.querySelector("#graph-wrapper")
+const graph_wrapper = document.querySelector("#graph-wrapper")
 
-let result = null
+let get_result = null
 
 
 let sol_index = 0
@@ -141,10 +141,6 @@ const romania_graph = {
     }
 }
 
-function createObject(object, variableName) {
-    globalThis[variableName] = object
-}
-
 // Create an array of nodes and edges
 let nodes = [];
 let edges = [];
@@ -218,52 +214,7 @@ step_by_step_checkbox.addEventListener('change', (e) => {
     }
 })
 
-async function compute_sol_handler(e) {
 
-
-
-    const start = start_select.value
-    const target = target_select.value
-    const algorithm = algorithm_select.value
-    const step_by_step = step_by_step_checkbox.checked
-
-    if (step_by_step) {
-        const step_result = result?.next()
-
-        if (result != null && step_result?.value != null) {
-            reset_graph()
-            update_ui(step_result.value.toJs())
-
-            return
-
-        }
-    }
-
-
-    switch (algorithm) {
-        case 'ucs':
-            result = (await pyodideGlobals.get('exec_py')('uniform_cost_search', {
-                start_key: start,
-                target_key: target,
-                step_by_step: step_by_step
-            })).toJs();
-            break;
-    }
-    const step_result = result.next()
-    reset_graph()
-    update_ui(step_result.value.toJs())
-
-}
-
-function reset() {
-    reset_graph()
-
-    document.querySelectorAll('.result-span').forEach(span => {
-        span.remove()
-    })
-
-    result = null
-}
 
 function reset_graph() {
     data.nodes.forEach(node => {
@@ -315,23 +266,25 @@ function ensure_contrast(r, g, b) {
 
 function update_ui(result) {
 
+    reset_graph()
+
     document.querySelectorAll('.result-span').forEach(span => {
         span.remove()
     })
 
     const span_text_content = {
-        'path': result.get("steps"),
-        'steps': result.get("steps"),
-        'cost': result.get("cost"),
-        'state': result.get("state"),
-        'frontier': result.get("frontier").join(', '),
-        'explored': result.get("explored").join(', '),
-        'action': result.get("action"),
-        'path': result.get("path").join(' 🡺 '),
-        'depth': result.get("depth")
+        'path': result.path,
+        'expansions': result.expansions,
+        'cost': result.cost,
+        'state': result.state,
+        'frontier': result.frontier.join(', '),
+        'explored': result.explored.join(', '),
+        'action': result.action,
+        'path': result.path.join(' 🡺 '),
+        'depth': result.depth
     }
 
-    highlight_path(result.get("path"))
+    highlight_path(result.path)
 
     for (let key in span_text_content) {
         const span = document.createElement('span')
@@ -343,8 +296,16 @@ function update_ui(result) {
 }
 
 
-find_path_btn.addEventListener('click', compute_sol_handler)
-reset_btn.addEventListener('click', reset)
-
 let network = new vis.Network(container, data, options);
 
+algorithm_select.addEventListener('change', (e) => {
+    const algo = e.target.value
+
+    if (algo == 'astar' || algo == 'greedy') {
+        target_select.disabled = true
+        target_select.value = 'Bucharest'
+    }
+    else {
+        target_select.disabled = false
+    }
+})
