@@ -1,16 +1,65 @@
+
 from data import romania_graph
 from search_algorithms import uniform_cost_search
-from pyodide.ffi import JsProxy
+from pyscript import window, document, when
 
-def exec_py(func, kargs):
-    if isinstance(kargs, JsProxy):
-        kargs = kargs.to_py()
-        print(kargs)
-    match func:
-        case 'uniform_cost_search':
-            return uniform_cost_search(romania_graph, **kargs)
+def get_city_edges(city):
+    return romania_graph[city].items()
+
+start_select = document.querySelector('#start_select')
+target_select = document.querySelector('#target_select')
+algorithm_select = document.querySelector('#algorithm_select')
+step_by_step_checkbox = document.querySelector('#step_by_step_checkbox')
+spans = document.querySelectorAll('.result-span')
+result = None
+
+@when('click', '#find_path_btn')
+def compute_sol_handler(e):	
+
+    global result
 
 
-from js import createObject
-from pyodide.ffi import create_proxy
-createObject(create_proxy(globals()), "pyodideGlobals")
+    start = start_select.value
+    target = target_select.value
+    algorithm = algorithm_select.value
+    step_by_step = step_by_step_checkbox.checked
+
+    step_result = None
+
+    if result and step_by_step:
+        try:
+            step_result = next(result)
+        except StopIteration:
+            pass
+
+    args = {
+        'start_state': start,
+        'target_state': target,
+        'step_by_step': step_by_step,
+        'successor_fun': get_city_edges
+    }
+
+    if step_result is None or step_by_step is False:
+        match (algorithm):
+            case 'ucs':
+                result = uniform_cost_search(**args)
+                step_result = next(result)
+                print(result)
+            
+
+    
+    if step_result:
+        window.update_ui(step_result)
+
+@when('click', '#reset')
+def reset():
+    global result
+    spans.forEach(lambda span: span.remove())
+    result = None
+    window.reset_graph()
+
+
+print('Script loaded')
+
+loading_div = document.querySelector('#loading')
+loading_div.remove()
