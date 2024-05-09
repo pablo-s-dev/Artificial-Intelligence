@@ -1,5 +1,5 @@
 
-from data import romania_graph
+from data import romania_graph, heuristic_values
 from search_algorithms import uniform_cost_search, breadth_first_search
 from pyscript import window, document, when
 
@@ -12,6 +12,9 @@ algorithm_select = document.querySelector('#algorithm_select')
 step_by_step_checkbox = document.querySelector('#step_by_step_checkbox')
 spans = document.querySelectorAll('.result-span')
 result = None
+
+def get_city_edges_with_heuristic(city):
+    return [(v, heuristic_values[v[0]]) for v in romania_graph[city].items()]
 
 @when('click', '#find_path_btn')
 def compute_sol_handler(e):	
@@ -36,19 +39,23 @@ def compute_sol_handler(e):
         'start_state': start,
         'target_state': target,
         'step_by_step': step_by_step,
-        'successor_fun': get_city_edges
     }
 
     if step_result is None or step_by_step is False:
         match (algorithm):
             case 'ucs':
+                args['successor_fun'] = get_city_edges
                 result = uniform_cost_search(**args)
                 step_result = next(result)
             case 'bfs':
+                args['successor_fun'] = get_city_edges
                 result = breadth_first_search(**args)
                 step_result = next(result)
                 pass
-
+            case 'greedy':
+                args['heuristic_fun'] = get_city_edges_with_heuristic
+                result = uniform_cost_search(**args)
+                step_result = next(result)
 
     
     if step_result:
