@@ -1,6 +1,6 @@
 
 from data import romania_graph
-from search_algorithms import uniform_cost_search
+from search_algorithms import uniform_cost_search, breadth_first_search
 from pyscript import window, document, when
 
 def get_city_edges(city):
@@ -44,19 +44,22 @@ def compute_sol_handler(e):
             case 'ucs':
                 result = uniform_cost_search(**args)
                 step_result = next(result)
-                print(result)
-            
+            case 'bfs':
+                result = breadth_first_search(**args)
+                step_result = next(result)
+                pass
+
 
     
     if step_result:
         window.update_ui(step_result)
 
-@when('click', '#reset')
+@when('click', '#reset_btn')
 def reset():
     global result
-    spans.forEach(lambda span: span.remove())
     result = None
     window.reset_graph()
+    window.reset_stats()
 
 
 print('Script loaded')
