@@ -1,0 +1,5 @@
+{
+	"scripts": {
+		"push-subtree": "git subtree push --prefix='Search Algorithms' https://github.com/pablo-s-dev/Artificial-Intelligence.git search-algorithms"
+	}
+}

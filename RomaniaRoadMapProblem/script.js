@@ -15,11 +15,6 @@ const depth_el = document.getElementById('depth')
 const bars = document.querySelectorAll('.bar')
 const graph_wrapper = document.querySelector("#graph-wrapper")
 
-let get_result = null
-
-
-let sol_index = 0
-
 const start_select = document.getElementById('start_select')
 const target_select = document.getElementById('target_select')
 const algorithm_select = document.getElementById('algorithm_select')
@@ -264,13 +259,17 @@ function ensure_contrast(r, g, b) {
     return luminance > 0.5 ? '#000000' : '#ffffff';
 }
 
+function reset_stats() {
+    document.querySelectorAll('.result-span').forEach(span => {
+        span.remove()
+    })
+}
+
 function update_ui(result) {
 
     reset_graph()
 
-    document.querySelectorAll('.result-span').forEach(span => {
-        span.remove()
-    })
+    reset_stats()
 
     const span_text_content = {
         'path': result.path,
@@ -278,7 +277,7 @@ function update_ui(result) {
         'cost': result.cost,
         'state': result.state,
         'frontier': result.frontier.join(', '),
-        'explored': result.explored.join(', '),
+        'explored': Array.from(result.explored).join(', '),
         'action': result.action,
         'path': result.path.join(' 🡺 '),
         'depth': result.depth
