@@ -1,6 +1,6 @@
 
 from data import romania_graph, heuristic_values
-from search_algorithms import uniform_cost_search, breadth_first_search
+from search_algorithms import uniform_cost_search, breadth_first_search, greedy_search, a_star_search
 from pyscript import window, document, when
 
 def get_city_edges(city):
@@ -14,7 +14,8 @@ spans = document.querySelectorAll('.result-span')
 result = None
 
 def get_city_edges_with_heuristic(city):
-    return [(v, heuristic_values[v[0]]) for v in romania_graph[city].items()]
+    return [(e, w, heuristic_values[e]) for e, w in romania_graph[city].items()]
+
 
 @when('click', '#find_path_btn')
 def compute_sol_handler(e):	
@@ -53,8 +54,12 @@ def compute_sol_handler(e):
                 step_result = next(result)
                 pass
             case 'greedy':
-                args['heuristic_fun'] = get_city_edges_with_heuristic
-                result = uniform_cost_search(**args)
+                args['successor_fun'] = get_city_edges_with_heuristic
+                result = greedy_search(**args)
+                step_result = next(result)
+            case 'astar':
+                args['successor_fun'] = get_city_edges_with_heuristic
+                result = a_star_search(**args, start_heuristic=heuristic_values[start])
                 step_result = next(result)
 
     
