@@ -1,6 +1,6 @@
 
 from data import romania_graph, heuristic_values
-from search_algorithms import uniform_cost_search, breadth_first_search, greedy_search, a_star_search
+from search_algorithms import uniform_cost_search, breadth_first_search, greedy_search, a_star_search, depth_first_search
 from pyscript import window, document, when
 
 def get_city_edges(city):
@@ -60,6 +60,10 @@ def compute_sol_handler(e):
             case 'astar':
                 args['successor_fun'] = get_city_edges_with_heuristic
                 result = a_star_search(**args, start_heuristic=heuristic_values[start])
+                step_result = next(result)
+            case 'dfs':
+                args['successor_fun'] = get_city_edges
+                result = depth_first_search(**args)
                 step_result = next(result)
 
     
