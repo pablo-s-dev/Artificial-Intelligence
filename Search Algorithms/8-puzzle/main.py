@@ -177,6 +177,8 @@ def action_to_string(action):
 
 def main():
 
+    step_by_step = False
+
     start_matrix = np.array([
         [1, 2, 3],
         [4, 5, 6],
@@ -187,11 +189,11 @@ def main():
 
 
     # Convert the state matrix back to a list for readability
-    result = next(a_star_search(
+    result = next(breadth_first_search(
         start_state= (start_matrix.tobytes(), start_void_pos),
         target_state=(TARGET_MATRIX.tobytes(), (2, 2)),
         successor_fun=get_next_valid_moves,
-        heuristic_fun=get_unsorted_amount
+        step_by_step = step_by_step,
     ))
 
         # Convert the state matrix back to a list for readability
@@ -208,8 +210,28 @@ def main():
 
     # print(json.dumps(result, indent=4))
     # Bullet point print
-    print("\n\nResults: \n-----------\n")
-    for key, val in result.items():
-        print(f"{key} - {val}\n")
+    if step_by_step is False:
+        with open("bfs-results.txt", "w") as f:
+            f.write("Results: \n-----------\n")
+            f.write(f"Start state: {start_matrix}\n")
+            f.write(f"Target state: {TARGET_MATRIX}\n")
+            f.write(f"Solution: \n")
+            for key, val in result.items():
+
+                f.write(f"{key}: {val}\n")
+        
+        print("Results saved to results.txt")
+
+    else:
+
+        print(f"Start state: {start_matrix}")
+        print(f"Target state: {TARGET_MATRIX}")
+        print(f"Solution: \n")
+
+        for key, val in result.items():
+
+            print(f"{key}: {val}")
+
+
 
 main()
