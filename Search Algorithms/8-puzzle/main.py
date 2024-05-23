@@ -260,7 +260,7 @@ def main():
 
     step_by_step = False
     # Convert the state matrix back to a list for readability
-    result = next(iterative_deepening_search(
+    result = next(breadth_first_search(
         start_state= (start_matrix, start_void_pos),
         target_state=(TARGET_MATRIX, (2, 2)),
         successor_fun=get_next_valid_moves,
@@ -271,7 +271,7 @@ def main():
 
 
     if step_by_step is False:
-        with open("results.txt", "w") as f:
+        with open("bfs-results.txt", "w") as f:
             f.write("Results: \n-----------\n")
             f.write(f"Start state: {start_matrix}\n")
             f.write(f"Target state: {TARGET_MATRIX}\n")
