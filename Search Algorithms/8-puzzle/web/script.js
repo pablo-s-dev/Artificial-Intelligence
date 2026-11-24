@@ -6,11 +6,36 @@ let graphNodes,graphEdges,network,visible=new Map(),recent=[];
 const opposite={Up:'↓',Down:'↑',Left:'→',Right:'←'};
 function setStat(id,value){$(id).querySelector('span').textContent=value??'—'}
 function active(){return selected||(solution&&solution[solutionIndex])||frame?.node||null}
+// The rendered board is the state AFTER the swap: move.from is now empty,
+// and move.to contains the moved tile. Draw from the visible blank to the tile.
+function moveArrow(move,center,spacing){
+ if(!move)return '';
+ const [x,y]=center(move.from),[tx,ty]=center(move.to);
+ const dx=(tx-x)/spacing,dy=(ty-y)/spacing;
+ const sx=x+dx*spacing*.08,sy=y+dy*spacing*.08;
+ const ex=x+dx*spacing*.76,ey=y+dy*spacing*.76;
+ const bx=ex-dx*spacing*.17,by=ey-dy*spacing*.17;
+ const px=-dy*spacing*.085,py=dx*spacing*.085;
+ const points=[ [ex,ey],[bx+px,by+py],[bx-px,by-py] ].map(p=>p.join(',')).join(' ');
+ return '<g fill="#477256" stroke-linecap="round" stroke-linejoin="round">'+
+ '<path d="M '+sx+' '+sy+' L '+bx+' '+by+'" fill="none" stroke="#f1f5ef" stroke-width="'+spacing*.075+'"/>'+
+ '<polygon points="'+points+'" stroke="#f1f5ef" stroke-width="'+spacing*.032+'"/>'+
+ '<path d="M '+sx+' '+sy+' L '+bx+' '+by+'" fill="none" stroke="#477256" stroke-width="'+spacing*.045+'"/>'+
+ '<polygon points="'+points+'"/></g>';
+}
 function makeBoard(el,state,move,interactive=false){
  el.replaceChildren();const legal=new Map(Puzzle.moves(state).map(m=>[m.from,m]));
  for(let i=0;i<9;i++){const tile=+state[i],b=document.createElement('button');b.type='button';b.className='tile'+(tile?'':' empty')+(move&&(i===move.to||i===move.from)?' changed':'');b.textContent=tile||'';b.setAttribute('aria-label',tile?'Tile '+tile:'Empty space');b.disabled=!interactive||!legal.has(i);
  if(!b.disabled){b.classList.add('legal');b.onclick=()=>{const m=legal.get(i);reset();initial=m.state;manualMove=m;render()}}
- if(move&&i===move.to&&tile){const a=document.createElement('span');a.className='direction';a.textContent=opposite[move.dir];a.setAttribute('aria-hidden','true');b.append(a)}el.append(b)}
+ el.append(b)}
+ if(move){
+  const arrow=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  arrow.setAttribute('class','move-arrow');
+  arrow.setAttribute('viewBox','0 0 300 300');
+  arrow.setAttribute('aria-hidden','true');
+  arrow.innerHTML=moveArrow(move,i=>[50+i%3*100,50+Math.floor(i/3)*100],100);
+  el.append(arrow);
+ }
 }
 function renderGame(){
  const n=active(),state=n?.state||initial,m=n?.move||(!frame?manualMove:null);
@@ -23,6 +48,7 @@ function image(n,focus,sol){
  let bg=n.duplicate?'#b2b2b2':focus?'#f1db9c':sol?'#b9dfc5':'#c4c4c4';
  let s='<svg xmlns="http://www.w3.org/2000/svg" width="118" height="132"><rect x="2" y="2" width="114" height="128" rx="6" fill="'+bg+'" stroke="#848484" stroke-width="2"/>';
  for(let i=0;i<9;i++){let x=8+i%3*34,y=8+Math.floor(i/3)*34,t=+n.state[i],changed=n.move&&(i===n.move.from||i===n.move.to);s+='<rect x="'+x+'" y="'+y+'" width="31" height="31" rx="3" fill="'+(t?(changed?'#b9dfc5':'#e8e8e8'):'#a5a5a5')+'" stroke="'+(changed?'#6b9b7a':'#929292')+'"'+(!t?' stroke-dasharray="3 2"':'')+'/>';if(t)s+='<text x="'+(x+15.5)+'" y="'+(y+21)+'" text-anchor="middle" font-family="Helvetica,Arial" font-size="16" font-weight="600" fill="#292929">'+t+'</text>'}
+ s+=moveArrow(n.move,i=>[23.5+i%3*34,23.5+Math.floor(i/3)*34],34);
  s+='<text x="59" y="122" text-anchor="middle" font-family="Helvetica,Arial" font-size="10" fill="#292929">'+(n.duplicate?'duplicate':'g='+n.g+'  h='+n.h)+'</text></svg>';
  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s);
 }
