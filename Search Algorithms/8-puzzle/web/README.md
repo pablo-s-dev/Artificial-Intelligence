@@ -1,0 +1,3 @@
+# 8-puzzle web simulator
+
+Open index.html in a browser. Game view supports manual play and search/solution playback. Graph view shows the current search-tree neighborhood, including pruned duplicates and movement arrows. It is capped at 70 visible nodes (not a cap on search). The search uses a 200,000-expansion safety budget. Shuffle counts random legal moves, not guaranteed optimal distances. All moves cost one. Manhattan and misplaced-tile heuristics exclude the empty tile. The existing Python CLI is unchanged. Graph rendering uses vis-network from a CDN; no Python runtime is needed. Run `node engine.test.js` to test the engine.
