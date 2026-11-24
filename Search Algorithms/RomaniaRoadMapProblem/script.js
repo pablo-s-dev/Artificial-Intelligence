@@ -188,6 +188,7 @@ function rebuild(){
 }
 function stat(id,value){const el=$(id);let span=el.querySelector('span');if(!span){span=document.createElement('span');span.className='result-span';el.append(span)}span.textContent=value==null?'':'\n'+value}
 function controls(){
+ $('frontier').hidden=!['bfs','dfs','ids','ucs','astar','greedy','dijkstra','topo'].includes(algorithm.value);
  const a=algorithm.value,heuristic=a==='astar'||a==='greedy';
  if(heuristic&&graphSelect.value==='romania')target.value='Bucharest';
  target.disabled=heuristic||!search.has(a);
@@ -218,7 +219,7 @@ function render(r){
  if(!isSearch&&a!=='topo'&&a!=='dag-count'&&r.d&&r.done&&!r.error){cost=r.d[dest];route=Number.isFinite(cost)?GraphAlgorithms.path(r.p,start.value,dest):[]}
  if(r.D&&r.done){const i=vs.indexOf(matrixSource||vs[0]),j=vs.indexOf(inspect||vs.at(-1));cost=r.D[i][j];route=Number.isFinite(cost)?GraphAlgorithms.path(Object.fromEntries(vs.map((v,k)=>[v,r.P[i][k]])),vs[i],vs[j]):[]}
  stat('path',route.join(' → '));stat('cost',cost===undefined?'':format(cost));stat('depth',route.length?route.length-1:r.depth);
- stat('frontier',r.frontier?.join(', '));stat('explored',r.explored?.join(', '));stat('expansions',r.expansions);stat('state',r.state|| (r.done?'Done':''));stat('action',r.action);stat('order',r.order?.join(' → '));
+ $('frontier').hidden=!r.frontier;stat('frontier',r.frontier?.join(', '));stat('explored',r.explored?.join(', '));stat('expansions',r.expansions);stat('state',r.state|| (r.done?'Done':''));stat('action',r.action);stat('order',r.order?.join(' → '));
  for(const n of nodes.get()){
  const v=n.id,active=r.active?.includes(v),inPath=route.includes(v),bad=r.affected?.includes(v);
  let value=r.indeg?r.indeg[v]:!isSearch&&a!=='topo'&&!r.D?r.d?.[v]:undefined;
