@@ -4,21 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Romania Road Map Problem</title>
+    <title>Graph Algorithms</title>
     <link rel="stylesheet" href="style.css">
-
-    <script src="./mini-coi.js"></script>
-
-    <link href="https://pyscript.net/releases/2024.5.1/core.js" rel="preload" as="script" crossorigin="anonymous">
-
-
 
     <script type="text/javascript" crossorigin="anonymous"
         src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 
-    <script type="module" src="https://pyscript.net/releases/2024.5.1/core.js"></script>
-    <script src="script.py" type="py" defer worker></script>
-
+    <script src="algorithms.js" defer></script>
     <script src="script.js" type="text/javascript" defer></script>
 
 
@@ -26,29 +18,15 @@
 
 <body>
 
-    <py-config>
-        packages = ['heapdict']
-        [[fetch]]
-        files = ['data.py']
-        from = '.'
-        to_folder = '.'
-        [[fetch]]
-        files = ['search_algorithms.py']
-        from = '../'
-        to_folder = '.'
-    </py-config>
+
 
     <div id="title_wrapper">
-        <h1 id="title">Romania Roadmap problem: Search Algorithms</h1>
+        <h1 id="title">Graph Algorithms</h1>
     </div>
 
     <div id="content">
 
-        <div id="loading">
-            Loading python...
-            (not really a good idea tbh :D)
 
-        </div>
 
         <a href="https://github.com/pablo-s-dev/Artificial-Intelligence/tree/main/Search%20Algorithms/RomaniaRoadMapProblem"
             id="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250"
@@ -71,11 +49,14 @@
             <p id="cost">Cost:</p>
             <p id="expansions">Expansions:</p>
             <p id="state">State: </p>
-            <p id="action">Next action: </p>
+            <p id="action">Action: </p>
+            <p id="order">Order:</p>
         </div>
         <div id="config-bar" class="bar">
 
             <div id="configs">
+                <label for="graph_select">Graph:</label>
+                <select id="graph_select"><option value="romania">Romania roadmap</option><option value="dag">Seminar DAG</option><option value="negative">Negative edges</option><option value="cycle">Negative cycle</option></select>
                 <label for="start_select">From:</label>
                 <select name="start" id="start_select">
                     <option value="Arad">Arad</option>
@@ -124,13 +105,16 @@
                 </select>
                 <label for="algorithm_select">Algorithm:</label>
                 <select name="algorithm" id="algorithm_select">
-                    <option value="bfs">BFS</option>
-                    <option value="dfs">DFS</option>
-                    <option value="ids">IDS</option>
-                    <option value="ucs" selected="selected">UCS</option>
-                    <option value="astar">A*</option>
-                    <option value="greedy">Greedy</option>
+                    <optgroup label="Point-to-point search">
+                      <option value="bfs">BFS</option><option value="dfs">DFS</option><option value="ids">IDS</option><option value="ucs" selected>UCS</option><option value="astar">A*</option><option value="greedy">Greedy</option>
+                    </optgroup>
+                    <optgroup label="Single-source shortest paths">
+                      <option value="dijkstra">Dijkstra</option><option value="bellman">Bellman-Ford (in-place)</option><option value="bellman-sync">Bellman-Ford (DP by edges)</option><option value="dag-min">DAG shortest path</option>
+                    </optgroup>
+                    <optgroup label="All-pairs shortest paths"><option value="floyd">Floyd-Warshall</option></optgroup>
+                    <optgroup label="Other DAG algorithms"><option value="topo">Topological sort (Kahn)</option><option value="dag-max">DAG longest path</option><option value="dag-count">DAG path counting</option></optgroup>
                 </select>
+                <label id="reverse_label" hidden><input id="reverse_edges" type="checkbox"> Reverse edge order</label>
             </div>
             <div>
                 <div>
@@ -143,6 +127,7 @@
                 </div>
             </div>
         </div>
+        <details id="dp_panel" class="bar" hidden open><summary>Algorithm tables</summary><p id="table_hint"></p><div id="dp_tables"></div></details>
         <div id="graph-wrapper">
             <div id="mynetwork"></div>
         </div>
