@@ -1,6 +1,16 @@
 /* Pure JS generators; no DOM dependencies. */
 const GraphAlgorithms = (function engine(){
 const inf=Infinity;
+// Indexed binary min-heap: one entry per vertex, O(log V) insert/decrease/pop.
+class MinHeap {
+ constructor(priority){this.a=[];this.pos=new Map();this.priority=priority}
+ get length(){return this.a.length}
+ swap(i,j){[this.a[i],this.a[j]]=[this.a[j],this.a[i]];this.pos.set(this.a[i],i);this.pos.set(this.a[j],j)}
+ up(i){while(i>0){const p=(i-1)>>1;if(this.priority(this.a[p])<=this.priority(this.a[i]))break;this.swap(p,i);i=p}}
+ set(v){if(!this.pos.has(v)){this.pos.set(v,this.a.length);this.a.push(v)}this.up(this.pos.get(v))}
+ pop(){const root=this.a[0],last=this.a.pop();this.pos.delete(root);if(this.a.length){this.a[0]=last;this.pos.set(last,0);let i=0;while(true){let m=i,l=2*i+1,r=l+1;if(l<this.a.length&&this.priority(this.a[l])<this.priority(this.a[m]))m=l;if(r<this.a.length&&this.priority(this.a[r])<this.priority(this.a[m]))m=r;if(m===i)break;this.swap(i,m);i=m}}return root}
+}
+
 function path(p,s,t){let a=[],seen=new Set();for(let v=t;v!=null&&!seen.has(v);v=p[v]){a.push(v);if(v===s)return a.reverse();seen.add(v)}return []}
 function* run(g,algo,s,t,reverse=false){
 const vs=Object.keys(g),n=vs.length,es=vs.flatMap(u=>Object.entries(g[u]).map(([v,w])=>[u,v,w]));if(reverse)es.reverse();
@@ -51,12 +61,14 @@ if(algo==="ids"){
  for(let limit=0;limit<n;limit++){const stack=[{route:[s],cost:0}];while(stack.length){const {route,cost}=stack.pop(),u=route.at(-1);expansions++;const found=u===t;if(!found&&route.length-1<limit)for(const [v,w] of Object.entries(g[u]).reverse())if(!route.includes(v))stack.push({route:[...route,v],cost:cost+w});yield out(`Depth limit ${limit}: visit ${u}`,{path:route,cost,frontier:stack.map(x=>x.route.at(-1)),state:u,expansions,depth:route.length-1,done:found});if(found)return}}
  yield out("No path",{done:true,path:[]});return;
 }
-const frontier=[s],seen=new Set([s]),closed=new Set();let expansions=0;
+const seen=new Set([s]),closed=new Set();let expansions=0;
 const priority=v=>algo==="greedy"?heuristic[v]:d[v]+(algo==="astar"?heuristic[v]:0);
-while(frontier.length){if(["ucs","dijkstra","astar","greedy"].includes(algo))frontier.sort((a,b)=>priority(a)-priority(b));
- const u=algo==="dfs"?frontier.pop():frontier.shift();closed.add(u);const route=path(p,s,u),found=algo!=="dijkstra"&&u===t;
- if(!found){expansions++;for(const [v,w] of Object.entries(g[u])){let c=d[u]+w;const weighted=["ucs","dijkstra","astar"].includes(algo);if(weighted?c<d[v]:!seen.has(v)){d[v]=c;p[v]=u;seen.add(v);closed.delete(v);if(!frontier.includes(v))frontier.push(v)}}}
- yield out(`Visit ${u}`,{path:route,cost:d[u],state:u,depth:route.length-1,frontier:frontier.slice(),explored:[...closed],expansions,done:found,active:[u]});if(found)return;
+const heapMode=["ucs","dijkstra","astar","greedy"].includes(algo),heap=new MinHeap(priority),frontier=[s];
+if(heapMode)heap.set(s);
+while(heapMode?heap.length:frontier.length){
+ const u=heapMode?heap.pop():algo==="dfs"?frontier.pop():frontier.shift();closed.add(u);const route=path(p,s,u),found=algo!=="dijkstra"&&u===t;
+ if(!found){expansions++;for(const [v,w] of Object.entries(g[u])){let c=d[u]+w;const weighted=["ucs","dijkstra","astar"].includes(algo);if(weighted?c<d[v]:!seen.has(v)){d[v]=c;p[v]=u;seen.add(v);closed.delete(v);if(heapMode)heap.set(v);else frontier.push(v)}}}
+ yield out(`Visit ${u}`,{path:route,cost:d[u],state:u,depth:route.length-1,frontier:heapMode?heap.a.slice():frontier.slice(),explored:[...closed],expansions,done:found,active:[u]});if(found)return;
 }
 yield out(algo==="dijkstra"?"All reachable vertices settled":"No path",{done:true,path:[],explored:[...closed],expansions});
 }
