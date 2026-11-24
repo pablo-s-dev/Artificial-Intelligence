@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>8-Puzzle Problem: Search Algorithms</title>
+<link rel="stylesheet" href="style.css">
+<script defer src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<script defer src="engine.js"></script>
+<script defer src="script.js"></script>
+</head>
+<body>
+<header id="title_wrapper"><h1>8-Puzzle Problem: Search Algorithms</h1>
+<nav class="tabs" aria-label="Visualization"><button id="game_tab" aria-selected="true">Game view</button><button id="graph_tab" aria-selected="false">Graph view</button></nav></header>
+<a id="github-corner" href="https://github.com/pablo-s-dev/Artificial-Intelligence/tree/main/Search%20Algorithms/8-puzzle/web" aria-label="View source on Github"><svg width="68" height="68" viewBox="0 0 250 250" style="fill:#151513;color:#fff;position:absolute;top:0;right:0" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path fill="currentColor" d="M115,115 C114,115 119,118 123,116 L142,97 C135,80 139,68 148,60 C163,46 179,51 190,63 C202,75 204,93 193,109 C185,120 171,123 161,120 L143,138 C140,142 141,149 142,153 Z"/></svg></a>
+<main id="content">
+<section id="game_view" aria-label="Game view">
+<div class="game-layout">
+<div class="board-panel"><span class="eyebrow">Current state</span><div id="board" class="board" aria-label="Puzzle board"></div><p id="move_caption" class="caption">Click a tile next to the empty space.</p></div>
+<div class="goal-panel"><span class="eyebrow">Goal state</span><div id="goal" class="board small" aria-label="Goal board"></div><p class="caption">0 = empty space</p></div>
+</div>
+<div id="solution_controls" hidden><button id="solution_prev">← Previous move</button><span id="solution_index"></span><button id="solution_next">Next move →</button></div>
+<p class="legend"><span class="swatch moved"></span> Moved tile <span class="swatch blank"></span> New empty cell</p>
+</section>
+<section id="graph_view" hidden aria-label="Graph view"><div id="mynetwork"></div><div id="graph_note" class="graph-note">Search tree · arrows show movement of the empty cell</div></section>
+</main>
+<aside id="results-bar" class="bar"><h2>Results</h2><p id="state">State: <span></span></p><p id="depth">Depth: <span></span></p><p id="heuristic">Heuristic (h): <span></span></p><p id="score">Priority: <span></span></p><p id="frontier">Frontier: <span></span></p><p id="expansions">Expansions: <span></span></p><p id="generated">Generated: <span></span></p><p id="action">Action: <span></span></p></aside>
+<aside id="config-bar" class="bar"><div id="configs">
+<label for="algorithm">Algorithm:</label><select id="algorithm"><optgroup label="Uninformed"><option value="bfs">BFS</option><option value="dfs">DFS</option><option value="ids">IDS</option><option value="ucs">UCS</option></optgroup><optgroup label="Informed"><option value="astar" selected>A*</option><option value="greedy">Greedy</option></optgroup></select>
+<label for="heuristic_select">Heuristic:</label><select id="heuristic_select"><option value="manhattan">Manhattan distance</option><option value="misplaced">Misplaced tiles</option></select>
+<label for="scramble_depth">Shuffle moves:</label><select id="scramble_depth"><option>4</option><option>8</option><option selected>12</option><option>20</option><option>30</option></select>
+<button id="shuffle">Shuffle</button><button id="custom">Set board</button>
+<label for="step_by_step"><input id="step_by_step" type="checkbox" checked> Step by step</label>
+<label for="speed">Speed: <input id="speed" type="range" min="1" max="10" value="5"></label>
+<div id="control_div"><button id="reset">Reset</button><button id="run">Next Step</button><button id="pause" hidden>Pause</button></div>
+</div></aside>
+<dialog id="custom_dialog"><form method="dialog"><h2>Set initial board</h2><label for="board_input">Nine digits (0 is empty)</label><input id="board_input" maxlength="17" autocomplete="off" inputmode="numeric"><p id="input_error" role="alert"></p><div><button value="cancel">Cancel</button><button id="apply_board" value="apply">Apply</button></div></form></dialog>
+</body></html>
