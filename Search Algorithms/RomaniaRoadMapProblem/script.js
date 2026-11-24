@@ -196,7 +196,7 @@ function controls(){
  go.textContent=step.checked?'Next Step':search.has(a)?'Find Path':'Run';
 }
 function reset(){
- iterator=null;last=null;inspect=null;
+ iterator=null;last=null;inspect=null;matrixSource=null;
  for(const n of nodes.get())nodes.update({id:n.id,label:n.id,color:{background:'#c4c4c4ff',border:'#848484'},font:{color:'#000000'}});
  for(const e of edges.get())edges.update({id:e.id,color:{color:'#e9e9e9'},width:1});
  for(const el of document.querySelectorAll('.result-span'))el.remove();
@@ -215,7 +215,7 @@ function table(title,headers,rows,active=null,onCell=null){
 function render(r){
  last=r;const a=algorithm.value,isSearch=search.has(a),dest=inspect||target.value;
  let route=r.path||[],cost=r.cost;
- if(!isSearch&&a!=='topo'&&a!=='dag-count'&&r.d&&r.done&&Number.isFinite(r.d[dest])){route=GraphAlgorithms.path(r.p,start.value,dest);cost=r.d[dest]}
+ if(!isSearch&&a!=='topo'&&a!=='dag-count'&&r.d&&r.done&&!r.error){cost=r.d[dest];route=Number.isFinite(cost)?GraphAlgorithms.path(r.p,start.value,dest):[]}
  if(r.D&&r.done){const i=vs.indexOf(matrixSource||vs[0]),j=vs.indexOf(inspect||vs.at(-1));cost=r.D[i][j];route=Number.isFinite(cost)?GraphAlgorithms.path(Object.fromEntries(vs.map((v,k)=>[v,r.P[i][k]])),vs[i],vs[j]):[]}
  stat('path',route.join(' → '));stat('cost',cost===undefined?'':format(cost));stat('depth',route.length?route.length-1:r.depth);
  stat('frontier',r.frontier?.join(', '));stat('explored',r.explored?.join(', '));stat('expansions',r.expansions);stat('state',r.state|| (r.done?'Done':''));stat('action',r.action);stat('order',r.order?.join(' → '));
@@ -238,6 +238,7 @@ function render(r){
  table('Distance matrix D',['from / to',...vs],r.D.map((row,i)=>[vs[i],...row]),selected,(i,j)=>{if(r.done){matrixSource=vs[i];inspect=vs[j];render(r)}});
  table('Predecessor matrix P',['from / to',...vs],r.P.map((row,i)=>[vs[i],...row]),selected);
  }else if(r.indeg){table('Kahn indegree',['Vertex','Indegree'],vs.map(v=>[v,r.indeg[v]]))}
+ else if(a==='topo'){table('Topological order',['Position','Vertex'],(r.order||[]).map((v,i)=>[i+1,v]))}
  else if(r.d){table(a==='dag-count'?'Path counts':'Distances and predecessors',['Vertex','Value','Pred'],vs.map(v=>[v,r.d[v],r.p[v]]));if(r.rows)table('Completed passes',['k',...vs],r.rows.map((row,i)=>[i,...vs.map(v=>row[v])]))}
 }
 let matrixSource=null;
